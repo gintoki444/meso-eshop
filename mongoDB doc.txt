@@ -1,0 +1,5 @@
+mongo DB User :
+Username : nugin2010
+Password : mAO228DroE62RNBo
+
+Autogenerate Secure Password
