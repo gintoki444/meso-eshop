@@ -1,14 +1,34 @@
 const express = require('express');
 const app = express();
+const bodyParser = require('body-parser');
+const morgan = require('morgan');
 
+
+// env สำหรับสร้าง path ให้กับ api
 require('dotenv/config');
 const api = process.env.API_URL;
 
 
-//http://localhost:3000/api/v1/product
+// express สำหรับรับค่า json ก่อนสร้างสินค้าต้องใส่ไว้ด้านบนเท่านั้น
+app.use(bodyParser.json());
 
-app.get(api+'/product', (req, res)=>{
-    res.send('Hello API !');
+// Morgan - ให้การเก็บ Request Log
+app.use(morgan('tiny'));
+
+// api สำหรับกาแสดงรายละเอียดของสินค้า
+app.get(`${api}/products`, (req, res)=>{
+    const product = {
+        id: 1,
+        name: 'cosmelan pack',
+        image: 'some_url',
+    }
+    res.send(product);
+}) 
+// api สำหรับสร้างสินค้า
+app.post(`${api}/products`, (req, res)=>{
+    const newProduct = req.body;
+    console.log(newProduct);
+    res.send(newProduct);
 }) 
 
 
