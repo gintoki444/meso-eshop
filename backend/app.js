@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
+const mongoose = require('mongoose');
 
 
 // env สำหรับสร้าง path ให้กับ api
@@ -29,8 +30,16 @@ app.post(`${api}/products`, (req, res)=>{
     const newProduct = req.body;
     console.log(newProduct);
     res.send(newProduct);
-}) 
+})
 
+// สร้างการเชื่อมต่อกับ database mogoDB cloud
+mongoose.connect(process.env.CONNECTION_STRING)
+.then(()=>{
+    console.log('Database connection Start!! ');
+})
+.catch((err)=>{
+    console.log(err);
+})
 
 app.listen(3000, ()=>{
     console.log(api);
