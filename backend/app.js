@@ -16,24 +16,45 @@ app.use(bodyParser.json());
 // Morgan - ให้การเก็บ Request Log
 app.use(morgan('tiny'));
 
+
+
 // api สำหรับกาแสดงรายละเอียดของสินค้า
-app.get(`${api}/products`, (req, res)=>{
-    const product = {
-        id: 1,
-        name: 'cosmelan pack',
-        image: 'some_url',
+app.get(`${api}/products`, async (req, res)=>{
+
+    // เราจะมีการใช้งาน asyne และ await สำหรับตั้งก่อน ก่อนการรันเพื่อให้ไม่เกิด error
+    const productList = await Product.find();
+
+    if(!productList){
+        res.status(500).json({success:false})
     }
-    res.send(product);
+    res.send(productList);
 }) 
-// api สำหรับสร้างสินค้า
+// api สำหรับสร้าง/เพิ่มข้อมูลสินค้า
 app.post(`${api}/products`, (req, res)=>{
-    const newProduct = req.body;
-    console.log(newProduct);
-    res.send(newProduct);
+    // รับค่าจาก form
+    const product = new Product({
+        name: req.body.name,
+        image: req.body.image,
+        countInStock: req.body.countInStock
+    })
+
+    // ส่งค่าเข้าสู่ Database
+    product.save().then((createdProduct =>{
+        res.status(201).json(createdProduct)
+    })).catch((err) =>{
+        res.status(500).json({
+            error:err,
+            success: false
+        })
+    })
 })
 
 // สร้างการเชื่อมต่อกับ database mogoDB cloud
-mongoose.connect(process.env.CONNECTION_STRING)
+mongoose.connect(process.env.CONNECTION_STRING,{
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    dbName: 'meso-eshop-database'
+})
 .then(()=>{
     console.log('Database connection Start!! ');
 })
