@@ -47,7 +47,7 @@ router.put('/:id', async (req,res) =>{
     )
 
     if (!category)
-        return res.status(404).send('the catefory cannot be created!');
+        return res.status(404).send('the category cannot be created!');
     res.send(category);
 })
 
