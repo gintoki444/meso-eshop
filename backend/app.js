@@ -4,17 +4,18 @@ const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const cors =require('cors');
-
-
-// env สำหรับสร้าง path ให้กับ api 
-// middleware
 require('dotenv/config');
-// express สำหรับรับค่า json ก่อนสร้างสินค้าต้องใส่ไว้ด้านบนเท่านั้น
+const authJwt = require('./helpers/jwt');
+const errorHandler = require('./helpers/error-handler');
+
+
+// middleware
 app.use(bodyParser.json());
-// Morgan - ให้การเก็บ Request Log
 app.use(morgan('tiny'));
 app.use(cors());
 app.options('*', cors());
+app.use(authJwt());
+app.use(errorHandler);
 
 
 
@@ -33,7 +34,6 @@ app.use(`${api}/orders`,ordersRouter);
 app.use(`${api}/users`,usersRouter);
 
 
-// สร้างการเชื่อมต่อกับ database mogoDB cloud
 // Database
 mongoose.connect(process.env.CONNECTION_STRING,{
     useNewUrlParser: true,

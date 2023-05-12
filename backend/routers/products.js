@@ -5,7 +5,7 @@ const router = express.Router();
 const mongoose = require('mongoose');
 
 
-// api สำหรับกาแสดงรายละเอียดของสินค้า
+// api แสดงข้อมูลสินค้าทั้งหมด
 router.get(`/`, async (req, res) => {
 
     // http://localhost:3000/api/v1/products?categories=123,234
@@ -23,7 +23,7 @@ router.get(`/`, async (req, res) => {
     res.send(product);
 })
 
-
+// api แสดงข้อมูลสินค้า ตาม ID
 router.get(`/:id`, async (req, res) => {
 
     const product = await Product.findById(req.params.id).populate('category');
@@ -35,7 +35,7 @@ router.get(`/:id`, async (req, res) => {
 })
 
 
-// // api สำหรับสร้าง/เพิ่มข้อมูลสินค้า
+// api สำหรับสร้าง/เพิ่มข้อมูลสินค้า
 router.post(`/`, async (req, res) => {
     const category = await Category.findById(req.body.category);
     if (!category) return res.status(400).send('Invalid Category')
@@ -56,13 +56,13 @@ router.post(`/`, async (req, res) => {
     
     const newProduct = await product.save();
 
-    if(!newProduct)
-    return res.status(500).send('The pruduct cannot br created!')
+    if(!newProduct) return res.status(500).send('The pruduct cannot br created!')
 
     res.send(newProduct);
 
 })
 
+// api แก้ไขข้อมูลสินค้า
 router.put('/:id', async (req,res) =>{
     if(!mongoose.isValidObjectId(req.params.id)) {
         res.status(400).send('Invalid Product')
@@ -94,6 +94,7 @@ router.put('/:id', async (req,res) =>{
 })
 
 
+// api ลบข้อมูลสินค้า
 router.delete('/:id', (req,res) =>{
     Product.findByIdAndRemove(req.params.id).then(product =>{
         if(product){
@@ -106,6 +107,7 @@ router.delete('/:id', (req,res) =>{
     })
 })
 
+// api นับจำนวนสินค้า
 router.get(`/get/count`, async (req, res) =>{
     const productCount = await Product.countDocuments();
 
@@ -118,7 +120,7 @@ router.get(`/get/count`, async (req, res) =>{
 })
 
 
-// แสดงรายการสินค้าตามสถานะของ isFeatured 
+// api sแสดงรายการสินค้าตามสถานะของ isFeatured 
 router.get(`/get/featured/:count`, async (req, res) =>{
     const count = req.params.count ? req.params.count : 0
     const products = await Product.find({isFeatured:true}).limit(+count);
